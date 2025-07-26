@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs'); // Import bcrypt
+const jwt = require('jsonwebtoken'); // Import jsonwebtoken
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -21,6 +22,18 @@ const userSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
+// Add this new method to the user schema
+userSchema.methods.generateAuthToken = async function () {
+  const user = this;
+  const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: '7 days' });
+
+  // In a real app, you might want to save the token to the user model to manage sessions
+  // user.tokens = user.tokens.concat({ token });
+  // await user.save();
+
+  return token;
+};
+
 // Hash the plain text password before saving
 userSchema.pre('save', async function (next) {
   const user = this;
@@ -31,6 +44,7 @@ userSchema.pre('save', async function (next) {
 
   next();
 });
+
 
 const User = mongoose.model('User', userSchema);
 
