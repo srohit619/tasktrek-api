@@ -1,4 +1,11 @@
+const path = require('path'); // 1. Import the 'path' module
+
+require('dotenv').config( );
+require('./db/mongoose');
+
+console.log('MongoDB URI:', process.env.MONGO_URI);
 const express = require('express');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
